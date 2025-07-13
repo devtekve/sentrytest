@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  build-webhook-ssh:
+  nativeaot-test-alpine:
     runs-on: [ubuntu-24.04-arm]
     steps:
       - name: Checkout Repository
@@ -12,8 +12,22 @@ jobs:
 
       - name: Build Docker image
         id: build
-        run: docker build -f Dockerfile -t nativeaot-test .
+        run: docker build -f Dockerfile_alpine -t nativeaot-test-alpine .
       
       - name: run Docker container to test
         timeout-minutes: 2
-        run: docker run nativeaot-test
+        run: docker run nativeaot-test-alpine
+    
+  nativeaot-test-ubuntu:
+    runs-on: [ubuntu-24.04-arm]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        id: build
+        run: docker build -f Dockerfile_ubuntu -t nativeaot-test-ubuntu .
+      
+      - name: run Docker container to test
+        timeout-minutes: 2
+        run: docker run nativeaot-test-ubuntu

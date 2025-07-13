@@ -4,7 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sentrytest", "src\sentrytes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{BC5A071C-3F33-41C4-969E-CD9E18B8DB21}"
 	ProjectSection(SolutionItems) = preProject
-		Dockerfile = Dockerfile
+		Dockerfile_alpine = Dockerfile_alpine
+		Dockerfile_ubuntu = Dockerfile_ubuntu
 	EndProjectSection
 EndProject
 Global

@@ -34,5 +34,6 @@ FROM base AS final
 WORKDIR /var/task
 COPY --from=publish /app/publish .
 COPY --from=publish /cert.pfx /cert.pfx
+COPY ["run.sh", "/var/task/run.sh"]
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/cert.pfx"
-ENTRYPOINT ["/var/task/sentrytest"]
+ENTRYPOINT ["sh", "/var/task/run.sh"]
