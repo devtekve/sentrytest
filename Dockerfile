@@ -1,0 +1,38 @@
+# Base image for running the application
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
+USER $APP_UID
+WORKDIR /app
+EXPOSE 22
+EXPOSE 80
+EXPOSE 8080
+EXPOSE 2222
+
+# SDK image for building the application
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+RUN apk --update add clang binutils musl-dev build-base zlib-static libunwind-dev libunwind-static xz-dev xz-static
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /build
+
+# Copy build scripts and config files
+COPY ["src/", "/build"]
+
+# Restore and build the project
+WORKDIR "/build"
+RUN dotnet restore
+RUN dotnet build --no-restore -c $BUILD_CONFIGURATION -o /app/build /p:PublishAot=true
+
+# Publish the app
+FROM build AS publish
+RUN dotnet publish -c $BUILD_CONFIGURATION -o /app/publish /p:PublishAot=true
+
+# Optional: generate HTTPS dev cert
+RUN dotnet dev-certs https -ep /cert.pfx -p ""
+RUN chmod 777 /cert.pfx
+
+# Final image
+FROM base AS final
+WORKDIR /var/task
+COPY --from=publish /app/publish .
+COPY --from=publish /cert.pfx /cert.pfx
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/cert.pfx"
+ENTRYPOINT ["/var/task/sentrytest"]

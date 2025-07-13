@@ -1,0 +1,19 @@
+name: Test nativeaot sentry
+
+on:
+  push:
+
+jobs:
+  build-webhook-ssh:
+    runs-on: [ubuntu-24.04-arm]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        id: build
+        run: docker build -f Dockerfile -t nativeaot-test .
+      
+      - name: run Docker container to test
+        timeout-minutes: 2
+        run: docker run nativeaot-test
